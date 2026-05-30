@@ -243,9 +243,6 @@ def main():
 
         table = create_table(overall_sj_statistics, args.town, keyword="SuperJob")
         print(table.table)
-    except requests.exceptions.HTTPError as err:
-        if err.response.status_code == 403:
-            print("Невалидный токен.")
     except requests.exceptions.ConnectionError:
         print("Ошибка соединения. Проверьте подключение")
 
