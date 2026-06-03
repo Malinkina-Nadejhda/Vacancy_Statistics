@@ -174,19 +174,37 @@ def main():
         ]
     ]
 
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(
+        description=r"""
+        Утилита для анализа зарплат IT-вакансий с данных SuperJob и Habr Career.
+        Пример ввода:
+        python .\vacancy_statistics.py # Общая статистика
+        python .\vacancy_statistics.py --mode town --town Москва # Статистика для города Москва
+        """,
+        epilog="""
+        Для работы программы требуется файл .env с переменной SJ_TOKEN.
+        """,
+        formatter_class=argparse.RawDescriptionHelpFormatter
+
+    )
     parser.add_argument(
         "--mode",
         choices=["all", "town"],
         default="all",
-        help="all - общая статистика,\n"
-             "town - статистика по городу,\n"
-             "default - all"
+        help="""
+        Режимы работы программы: 
+        all - общая статистика, 
+        town - статистика для конкретного города, 
+        default - all
+        """
     )
     parser.add_argument(
         "--town",
         type=str,
-        help="Введите название города"
+        help="""
+        Используется при mode=town,
+        Пример: --town Москва
+        """
     )
     args = parser.parse_args()
     try:
