@@ -85,7 +85,7 @@ def get_hbr_area_id(town):
     return area_hbr_id
 
 
-def get_sj_rub_salary_list(vacancies_sj_data):
+def extract_sj_rub_salary(vacancies_sj_data):
     salary_from = []
     salary_to = []
     for vacancy in vacancies_sj_data:
@@ -98,7 +98,7 @@ def get_sj_rub_salary_list(vacancies_sj_data):
 
 
 def predict_hbr_rub_salary(vacancies_hbr_data):
-    hbr_salary_list = []
+    hbr_salary_data = []
     for page in vacancies_hbr_data:
         vacancies = page["list"]
         for vacancy in vacancies:
@@ -111,16 +111,16 @@ def predict_hbr_rub_salary(vacancies_hbr_data):
             if vacancy["salary"]["currency"] != "rur":
                 continue
             elif not salary_to:
-                hbr_salary_list.append(salary_from * 1.2)
+                hbr_salary_data.append(salary_from * 1.2)
             elif not salary_from:
-                hbr_salary_list.append(salary_to * 0.8)
+                hbr_salary_data.append(salary_to * 0.8)
             else:
-                hbr_salary_list.append((salary_from + salary_to) / 2)
-    return hbr_salary_list
+                hbr_salary_data.append((salary_from + salary_to) / 2)
+    return hbr_salary_data
 
 
 def predict_sj_rub_salary(salary_from, salary_to):
-    salary_sj_list = []
+    salary_sj_data = []
     for i in range(len(salary_from)):
         sal_from = salary_from[i]
         sal_to = salary_to[i]
@@ -128,21 +128,21 @@ def predict_sj_rub_salary(salary_from, salary_to):
             continue
         elif sal_to == 0:
             avg = sal_from * 1.2
-            salary_sj_list.append(avg)
+            salary_sj_data.append(avg)
         elif sal_from == 0:
             avg = sal_to * 0.8
-            salary_sj_list.append(avg)
+            salary_sj_data.append(avg)
         else:
             avg = (sal_from + sal_to) / 2
-            salary_sj_list.append(avg)
-    return salary_sj_list
+            salary_sj_data.append(avg)
+    return salary_sj_data
 
 
-def get_average_salary(salary_list):
-    if not salary_list:
+def get_average_salary(salary_data):
+    if not salary_data:
         average_salary = 0
     else:
-        average_salary = int(sum(salary_list) / len(salary_list))
+        average_salary = int(sum(salary_data) / len(salary_data))
     return average_salary
 
 
@@ -225,13 +225,13 @@ def main():
                 return
         for language in languages:
             hbr_vacancies_data = get_hbr_vacancy_data(language, hbr_area_id)
-            hbr_salary_list = predict_hbr_rub_salary(hbr_vacancies_data)
+            hbr_salary_data = predict_hbr_rub_salary(hbr_vacancies_data)
             overall_hbr_statistics.append(
                 [
                     language,
                     hbr_vacancies_data[0]["meta"]["totalResults"],
-                    len(hbr_salary_list),
-                    get_average_salary(hbr_salary_list)
+                    len(hbr_salary_data),
+                    get_average_salary(hbr_salary_data)
                 ]
             )
         hbr_statistics = create_table(overall_hbr_statistics, args.town, keyword="Habr")
@@ -258,7 +258,7 @@ def main():
                 return
         for language in languages:
             sj_vacancies_data = get_sj_vacancy_data(sj_token, language, sj_area_id)
-            salary_from, salary_to = get_sj_rub_salary_list(sj_vacancies_data)
+            salary_from, salary_to = extract_sj_rub_salary(sj_vacancies_data)
             average_salaries = predict_sj_rub_salary(salary_from, salary_to)
             average_salary = get_average_salary(average_salaries)
             overall_sj_statistics.append(
