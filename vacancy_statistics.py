@@ -18,7 +18,7 @@ def get_sj_vacancy_data(sj_token, keyword, area_id):
             "count": 100,
             "town": area_id,
             "catalogues": 33,
-            "keyword": f"{keyword} программист"
+            "keyword": f"{keyword} программист",
         }
         response = requests.get(url, headers=headers, params=params)
         response.raise_for_status()
@@ -40,7 +40,7 @@ def get_hbr_vacancy_data(language, area_id):
         params = {
             "q": language,
             "page": page,
-            "locations[]": area_id
+            "locations[]": area_id,
         }
         response = requests.get(url, params=params)
         response.raise_for_status()
@@ -155,21 +155,23 @@ def create_table(overall_statistics, town, keyword):
 
 
 def main():
-    languages = ["Python",
-                 "Javascript",
-                 "Java",
-                 "C#",
-                 "C++",
-                 "PHP",
-                 "Ruby",
-                 "TypeScript"
-                 ]
+    languages = [
+        "Python",
+        "Javascript",
+        "Java",
+        "C#",
+        "C++",
+        "PHP",
+        "Ruby",
+        "TypeScript",
+    ]
     overall_hbr_statistics = [
-        ["Язык программирования",
-         "Вакансий найдено",
-         "Вакансий обработано",
-         "Средняя зарплата"
-         ]
+        [
+            "Язык программирования",
+            "Вакансий найдено",
+            "Вакансий обработано",
+            "Средняя зарплата",
+        ]
     ]
 
     parser = argparse.ArgumentParser()
@@ -207,11 +209,12 @@ def main():
             hbr_vacancies_data = get_hbr_vacancy_data(language, hbr_area_id)
             hbr_salary_list = predict_hbr_rub_salary(hbr_vacancies_data)
             overall_hbr_statistics.append(
-                [language,
-                 hbr_vacancies_data[0]["meta"]["totalResults"],
-                 len(hbr_salary_list),
-                 get_average_salary(hbr_salary_list)
-                 ]
+                [
+                    language,
+                    hbr_vacancies_data[0]["meta"]["totalResults"],
+                    len(hbr_salary_list),
+                    get_average_salary(hbr_salary_list)
+                ]
             )
         hbr_statistics = create_table(overall_hbr_statistics, args.town, keyword="Habr")
         print(hbr_statistics.table)
@@ -219,11 +222,12 @@ def main():
         print("Ошибка соединения. Проверьте подключение")
 
     overall_sj_statistics = [
-        ["Язык программирования",
-         "Вакансий найдено",
-         "Вакансий обработано",
-         "Средняя зарплата"
-         ]
+        [
+            "Язык программирования",
+            "Вакансий найдено",
+            "Вакансий обработано",
+            "Средняя зарплата",
+        ]
     ]
 
     try:
@@ -239,7 +243,14 @@ def main():
             salary_from, salary_to = get_sj_rub_salary_list(sj_vacancies_data)
             average_salaries = predict_sj_rub_salary(salary_from, salary_to)
             average_salary = get_average_salary(average_salaries)
-            overall_sj_statistics.append([language, len(sj_vacancies_data), len(average_salaries), average_salary])
+            overall_sj_statistics.append(
+                [
+                    language,
+                    len(sj_vacancies_data),
+                    len(average_salaries),
+                    average_salary,
+                ]
+            )
 
         table = create_table(overall_sj_statistics, args.town, keyword="SuperJob")
         print(table.table)
