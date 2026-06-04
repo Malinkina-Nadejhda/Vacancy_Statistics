@@ -97,7 +97,7 @@ def extract_sj_rub_salary(vacancies_sj_data):
     return salary_from, salary_to
 
 
-def predict_hbr_rub_salary(vacancies_hbr_data):
+def calculate_hbr_salary(vacancies_hbr_data):
     hbr_salary_data = []
     for page in vacancies_hbr_data:
         vacancies = page["list"]
@@ -119,7 +119,7 @@ def predict_hbr_rub_salary(vacancies_hbr_data):
     return hbr_salary_data
 
 
-def predict_sj_rub_salary(salary_from, salary_to):
+def calculate_sj_salary(salary_from, salary_to):
     salary_sj_data = []
     for i in range(len(salary_from)):
         sal_from = salary_from[i]
@@ -225,7 +225,7 @@ def main():
                 return
         for language in languages:
             hbr_vacancies_data = get_hbr_vacancy_data(language, hbr_area_id)
-            hbr_salary_data = predict_hbr_rub_salary(hbr_vacancies_data)
+            hbr_salary_data = calculate_hbr_salary(hbr_vacancies_data)
             overall_hbr_statistics.append(
                 [
                     language,
@@ -259,7 +259,7 @@ def main():
         for language in languages:
             sj_vacancies_data = get_sj_vacancy_data(sj_token, language, sj_area_id)
             salary_from, salary_to = extract_sj_rub_salary(sj_vacancies_data)
-            average_salaries = predict_sj_rub_salary(salary_from, salary_to)
+            average_salaries = calculate_sj_salary(salary_from, salary_to)
             average_salary = get_average_salary(average_salaries)
             overall_sj_statistics.append(
                 [
