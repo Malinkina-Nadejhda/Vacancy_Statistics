@@ -85,7 +85,7 @@ def get_hbr_area_id(town):
     return area_hbr_id
 
 
-def extract_sj_rub_salary(vacancies_sj_data):
+def extract_sj_salary(vacancies_sj_data):
     salary_from = []
     salary_to = []
     for vacancy in vacancies_sj_data:
@@ -274,5 +274,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
