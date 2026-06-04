@@ -255,7 +255,7 @@ def main():
                 return
         for language in languages:
             sj_vacancies_data = get_sj_vacancy_data(sj_token, language, sj_area_id)
-            salary_from, salary_to = extract_sj_rub_salary(sj_vacancies_data)
+            salary_from, salary_to = extract_sj_salary(sj_vacancies_data)
             salary_data = calculate_salaries(salary_from, salary_to)
             overall_sj_statistics.append(
                 [
