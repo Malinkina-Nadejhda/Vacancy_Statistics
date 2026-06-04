@@ -10,6 +10,7 @@ from dotenv import load_dotenv
 def get_sj_vacancy_data(sj_token, keyword, area_id):
     url = "https://api.superjob.ru/2.0/vacancies/"
     headers = {"X-Api-App-Id": sj_token}
+    DEVELOPMENT_CATEGORY_ID = 33
     vacancy_sj_data = []
     page = 0
     while True:
@@ -17,7 +18,7 @@ def get_sj_vacancy_data(sj_token, keyword, area_id):
             "page": page,
             "count": 100,
             "town": area_id,
-            "catalogues": 33,
+            "catalogues": DEVELOPMENT_CATEGORY_ID,
             "keyword": f"{keyword} программист",
         }
         response = requests.get(url, headers=headers, params=params)
