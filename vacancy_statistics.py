@@ -97,45 +97,41 @@ def extract_sj_rub_salary(vacancies_sj_data):
     return salary_from, salary_to
 
 
-def calculate_hbr_salaries(vacancies_hbr_data):
-    hbr_salary_data = []
+def extract_hbr_salaries(vacancies_hbr_data):
+    salary_from = []
+    salary_to = []
     for page in vacancies_hbr_data:
         vacancies = page["list"]
         for vacancy in vacancies:
             if not vacancy["salary"]:
                 continue
-            if not vacancy["salary"]["from"] and not vacancy["salary"]["to"]:
-                continue
-            salary_from = vacancy["salary"]["from"]
-            salary_to = vacancy["salary"]["to"]
+            sal_from = vacancy["salary"]["from"]
+            sal_to = vacancy["salary"]["to"]
             if vacancy["salary"]["currency"] != "rur":
                 continue
-            elif not salary_to:
-                hbr_salary_data.append(salary_from * 1.2)
-            elif not salary_from:
-                hbr_salary_data.append(salary_to * 0.8)
             else:
-                hbr_salary_data.append((salary_from + salary_to) / 2)
-    return hbr_salary_data
+                salary_from.append(sal_from)
+                salary_to.append(sal_to)
+    return salary_from, salary_to
 
 
-def calculate_sj_salaries(salary_from, salary_to):
-    salary_sj_data = []
+def calculate_salaries(salary_from, salary_to):
+    salary_data = []
     for i in range(len(salary_from)):
         sal_from = salary_from[i]
         sal_to = salary_to[i]
-        if sal_from == 0 and sal_to == 0:
+        if not sal_from and not sal_to:
             continue
-        elif sal_to == 0:
+        elif not sal_to:
             avg = sal_from * 1.2
-            salary_sj_data.append(avg)
-        elif sal_from == 0:
+            salary_data.append(avg)
+        elif not sal_from:
             avg = sal_to * 0.8
-            salary_sj_data.append(avg)
+            salary_data.append(avg)
         else:
             avg = (sal_from + sal_to) / 2
-            salary_sj_data.append(avg)
-    return salary_sj_data
+            salary_data.append(avg)
+    return salary_data
 
 
 def get_average_salary(salary_data):
@@ -225,7 +221,8 @@ def main():
                 return
         for language in languages:
             hbr_vacancies_data = get_hbr_vacancy_data(language, hbr_area_id)
-            hbr_salary_data = calculate_hbr_salary(hbr_vacancies_data)
+            salary_from, salary_to = extract_hbr_salaries(hbr_vacancies_data)
+            hbr_salary_data = calculate_salaries(salary_from, salary_to)
             overall_hbr_statistics.append(
                 [
                     language,
@@ -259,14 +256,13 @@ def main():
         for language in languages:
             sj_vacancies_data = get_sj_vacancy_data(sj_token, language, sj_area_id)
             salary_from, salary_to = extract_sj_rub_salary(sj_vacancies_data)
-            average_salaries = calculate_sj_salary(salary_from, salary_to)
-            average_salary = get_average_salary(average_salaries)
+            salary_data = calculate_salaries(salary_from, salary_to)
             overall_sj_statistics.append(
                 [
                     language,
                     len(sj_vacancies_data),
-                    len(average_salaries),
-                    average_salary,
+                    len(salary_data),
+                    get_average_salary(salary_data),
                 ]
             )
 
@@ -278,3 +274,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
