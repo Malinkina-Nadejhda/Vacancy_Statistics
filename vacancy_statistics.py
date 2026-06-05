@@ -232,10 +232,12 @@ def main():
                     get_average_salary(hbr_salary_data)
                 ]
             )
-        hbr_statistics = create_table(overall_hbr_statistics, args.town, keyword="Habr")
-        print(hbr_statistics.table)
     except requests.exceptions.ConnectionError:
         print("Ошибка соединения. Проверьте подключение")
+        return
+
+    hbr_statistics = create_table(overall_hbr_statistics, args.town, keyword="Habr")
+    print(hbr_statistics.table)
 
     overall_sj_statistics = [
         [
@@ -266,11 +268,12 @@ def main():
                     get_average_salary(salary_data),
                 ]
             )
-
-        table = create_table(overall_sj_statistics, args.town, keyword="SuperJob")
-        print(table.table)
     except requests.exceptions.ConnectionError:
         print("Ошибка соединения. Проверьте подключение")
+        return
+
+    table = create_table(overall_sj_statistics, args.town, keyword="SuperJob")
+    print(table.table)
 
 
 if __name__ == "__main__":
