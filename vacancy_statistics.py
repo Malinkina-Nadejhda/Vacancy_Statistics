@@ -118,9 +118,7 @@ def extract_hbr_salaries(vacancies_hbr_data):
 
 def calculate_salaries(salary_from, salary_to):
     salary_data = []
-    for i in range(len(salary_from)):
-        sal_from = salary_from[i]
-        sal_to = salary_to[i]
+    for sal_from, sal_to in zip(salary_from, salary_to):
         if not sal_from and not sal_to:
             continue
         elif not sal_to:
@@ -278,3 +276,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
