@@ -210,29 +210,34 @@ def main():
               "в .env файле")
         return
 
-    try:
-        if not args.town:
-            hbr_area_id = None
-        else:
+    hbr_area_id = None
+    if args.town:
+        try:
             hbr_area_id = get_hbr_area_id(args.town)
-            if not hbr_area_id:
-                print(f"город {args.town} не найден")
-                return
-        for language in languages:
+        except requests.exceptions.ConnectionError:
+            print("Ошибка соединения при получении ID города на Habr Career")
+            return
+    if not hbr_area_id:
+        if args.town:
+            print(f"город {args.town} не найден")
+            return
+
+    for language in languages:
+        try:
             hbr_vacancies_data = get_hbr_vacancy_data(language, hbr_area_id)
-            salary_from, salary_to = extract_hbr_salaries(hbr_vacancies_data)
-            hbr_salary_data = calculate_salaries(salary_from, salary_to)
-            overall_hbr_statistics.append(
-                [
-                    language,
-                    hbr_vacancies_data[0]["meta"]["totalResults"],
-                    len(hbr_salary_data),
-                    get_average_salary(hbr_salary_data)
-                ]
-            )
-    except requests.exceptions.ConnectionError:
-        print("Ошибка соединения. Проверьте подключение")
-        return
+        except requests.exceptions.ConnectionError:
+            print(f"Ошибка соединения при загрузке данных c Habr Career для {language}")
+            return
+        salary_from, salary_to = extract_hbr_salaries(hbr_vacancies_data)
+        hbr_salary_data = calculate_salaries(salary_from, salary_to)
+        overall_hbr_statistics.append(
+            [
+                language,
+                hbr_vacancies_data[0]["meta"]["totalResults"],
+                len(hbr_salary_data),
+                get_average_salary(hbr_salary_data)
+            ]
+        )
 
     hbr_statistics = create_table(overall_hbr_statistics, args.town, keyword="Habr")
     print(hbr_statistics.table)
@@ -246,29 +251,34 @@ def main():
         ]
     ]
 
-    try:
-        if not args.town:
-            sj_area_id = None
-        else:
+    sj_area_id = None
+    if args.town:
+        try:
             sj_area_id = get_sj_area_id(sj_token, args.town)
-            if not sj_area_id:
-                print(f"город {args.town} не найден")
-                return
-        for language in languages:
+        except requests.exceptions.ConnectionError:
+            print("Ошибка соединения при получении ID города на SuperJob")
+            return
+    if not sj_area_id:
+        if args.town:
+            print(f"город {args.town} не найден")
+            return
+
+    for language in languages:
+        try:
             sj_vacancies_data = get_sj_vacancy_data(sj_token, language, sj_area_id)
-            salary_from, salary_to = extract_sj_salary(sj_vacancies_data)
-            salary_data = calculate_salaries(salary_from, salary_to)
-            overall_sj_statistics.append(
-                [
-                    language,
-                    len(sj_vacancies_data),
-                    len(salary_data),
-                    get_average_salary(salary_data),
-                ]
-            )
-    except requests.exceptions.ConnectionError:
-        print("Ошибка соединения. Проверьте подключение")
-        return
+        except requests.exceptions.ConnectionError:
+            print(f"Ошибка соединения при загрузке данных c SuperJob для {language}")
+            return
+        salary_from, salary_to = extract_sj_salary(sj_vacancies_data)
+        salary_data = calculate_salaries(salary_from, salary_to)
+        overall_sj_statistics.append(
+            [
+                language,
+                len(sj_vacancies_data),
+                len(salary_data),
+                get_average_salary(salary_data),
+            ]
+        )
 
     table = create_table(overall_sj_statistics, args.town, keyword="SuperJob")
     print(table.table)
@@ -276,4 +286,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
