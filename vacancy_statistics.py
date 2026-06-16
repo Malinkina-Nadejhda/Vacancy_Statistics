@@ -86,7 +86,7 @@ def get_hbr_area_id(town):
     return area_hbr_id
 
 
-def extract_sj_salary(vacancies_sj_data):
+def extract_sj_salaries(vacancies_sj_data):
     sj_salaries = []
     for vacancy in vacancies_sj_data:
         if vacancy["currency"] != "rub":
@@ -264,7 +264,7 @@ def main():
         except requests.exceptions.ConnectionError:
             print(f"Ошибка соединения при загрузке данных c SuperJob для {language}")
             return
-        sj_salaries = extract_sj_salary(sj_vacancies_data)
+        sj_salaries = extract_sj_salaries(sj_vacancies_data)
         salary_data = calculate_salaries(sj_salaries)
         overall_sj_statistics.append(
             [
@@ -281,3 +281,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
