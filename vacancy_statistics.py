@@ -87,38 +87,36 @@ def get_hbr_area_id(town):
 
 
 def extract_sj_salary(vacancies_sj_data):
-    salary_from = []
-    salary_to = []
+    sj_salaries = []
     for vacancy in vacancies_sj_data:
         if vacancy["currency"] != "rub":
             continue
         else:
-            salary_from.append(vacancy["payment_from"])
-            salary_to.append(vacancy["payment_to"])
-    return salary_from, salary_to
+            sal_from = vacancy["payment_from"]
+            sal_to = vacancy["payment_to"]
+            sj_salaries.append((sal_from, sal_to))
+    return sj_salaries
 
 
 def extract_hbr_salaries(vacancies_hbr_data):
-    salary_from = []
-    salary_to = []
+    hbr_salaries = []
     for page in vacancies_hbr_data:
         vacancies = page["list"]
         for vacancy in vacancies:
             if not vacancy["salary"]:
                 continue
-            sal_from = vacancy["salary"]["from"]
-            sal_to = vacancy["salary"]["to"]
             if vacancy["salary"]["currency"] != "rur":
                 continue
             else:
-                salary_from.append(sal_from)
-                salary_to.append(sal_to)
-    return salary_from, salary_to
+                sal_from = vacancy["salary"]["from"]
+                sal_to = vacancy["salary"]["to"]
+                hbr_salaries.append((sal_from, sal_to))
+    return hbr_salaries
 
 
-def calculate_salaries(salary_from, salary_to):
+def calculate_salaries(salaries):
     salary_data = []
-    for sal_from, sal_to in zip(salary_from, salary_to):
+    for sal_from, sal_to in salaries:
         if not sal_from and not sal_to:
             continue
         elif not sal_to:
@@ -228,8 +226,8 @@ def main():
         except requests.exceptions.ConnectionError:
             print(f"Ошибка соединения при загрузке данных c Habr Career для {language}")
             return
-        salary_from, salary_to = extract_hbr_salaries(hbr_vacancies_data)
-        hbr_salary_data = calculate_salaries(salary_from, salary_to)
+        hbr_salaries = extract_hbr_salaries(hbr_vacancies_data)
+        hbr_salary_data = calculate_salaries(hbr_salaries)
         overall_hbr_statistics.append(
             [
                 language,
@@ -269,8 +267,8 @@ def main():
         except requests.exceptions.ConnectionError:
             print(f"Ошибка соединения при загрузке данных c SuperJob для {language}")
             return
-        salary_from, salary_to = extract_sj_salary(sj_vacancies_data)
-        salary_data = calculate_salaries(salary_from, salary_to)
+        sj_salaries = extract_sj_salary(sj_vacancies_data)
+        salary_data = calculate_salaries(sj_salaries)
         overall_sj_statistics.append(
             [
                 language,
