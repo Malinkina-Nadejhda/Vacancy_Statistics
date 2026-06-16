@@ -139,11 +139,8 @@ def get_average_salary(salary_data):
     return average_salary
 
 
-def create_table(overall_statistics, town, keyword):
-    if not town:
-        table = AsciiTable(overall_statistics, f"{keyword} all")
-    else:
-        table = AsciiTable(overall_statistics, f"{keyword} {town}")
+def create_table(overall_statistics, keyword, town):
+    table = AsciiTable(overall_statistics, f"{keyword} {town}")
     return table
 
 
@@ -237,7 +234,7 @@ def main():
             ]
         )
 
-    hbr_statistics = create_table(overall_hbr_statistics, args.town, keyword="Habr")
+    hbr_statistics = create_table(overall_hbr_statistics, keyword="Habr", town=args.town or "all")
     print(hbr_statistics.table)
 
     overall_sj_statistics = [
@@ -278,7 +275,7 @@ def main():
             ]
         )
 
-    table = create_table(overall_sj_statistics, args.town, keyword="SuperJob")
+    table = create_table(overall_sj_statistics, keyword="SuperJob", town=args.town or "all")
     print(table.table)
 
 
