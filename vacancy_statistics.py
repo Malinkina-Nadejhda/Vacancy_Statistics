@@ -275,10 +275,11 @@ def main():
             ]
         )
 
-    table = create_table(overall_sj_statistics, keyword="SuperJob", town=args.town or "all")
-    print(table.table)
+    sj_statistics = create_table(overall_sj_statistics, keyword="SuperJob", town=args.town or "all")
+    print(sj_statistics.table)
 
 
 if __name__ == "__main__":
     main()
+
 
